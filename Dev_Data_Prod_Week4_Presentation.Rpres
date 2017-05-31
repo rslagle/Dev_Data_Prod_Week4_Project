@@ -1,0 +1,76 @@
+<style>
+.small-code pre code {
+  font-size: 1em;
+}
+</style>
+
+Developing Data Products - Week 4 Project
+========================================================
+author: Rodney Slagle
+date: 5/31/2017
+autosize: true
+
+Application Overview
+========================================================
+
+Application Objectives:
+- Provide an interface for users to explore EU Stock Market Data
+- Provide simple user documentation for the application
+
+Project Objectives:
+- Use Shiny to produce an application that includes user input to interact with data
+- Use RStudio Presenter to produce a presentation on Git Hub Pages
+
+Application Use - Explore EU Stock Market Data
+========================================================
+
+To use this application:
+- Start the application
+- Enter a desired Start Date
+- Enter a desired End Date
+- Press the "Submit" button
+
+The resulting updated graph of the Stock Market Indexes is a "zoomed-in" section for just the date range selected.  In addition, the correlation between each of the Indexes for that date range is displayed.
+
+
+About the "EUStockMarkets" Data
+========================================================
+class: small-code
+
+This data comes from the default R database "EUStockMarkets", and contains daily closing values of four major European Stock Indexes.  The data originally comes as an R "mts" class (e.g., Time Series) with dates that ranges from 7/1/1991 through 8/25/1998.  For use in the application, the dataset has been transformed into a standard R dataFrame.
+
+```{r code1, echo=FALSE}
+library(lubridate)
+# Convert Time Series to Data Frame
+df <- as.data.frame(EuStockMarkets)
+# Extract Date and Time
+dateTime <- as.POSIXct(date_decimal(as.numeric(time(EuStockMarkets))))
+# Combine DateTime to Data Frame
+ EuStocksDF <- cbind(dateTime, df)
+```
+A snippet of the data looks like this:
+```{r headDataset}
+head(EuStocksDF)
+```
+
+Graphic View of the Dataset
+========================================================
+
+This is a graphic view of the full dataset
+
+
+```{r plotData, echo=FALSE}
+      minValue <- min(EuStocksDF[2:5])
+      maxValue <- max(EuStocksDF[2:5])
+      # Plot Data
+      plot(x=EuStocksDF$dateTime, y=EuStocksDF$DAX, type="l", col="red", xlab="", ylab="",
+           ylim=c(minValue, maxValue))
+      title(main="Stock Index Plot", 
+            xlab="Date Range - From: 7/1/1991 To: 8/25/1998",
+            ylab="Stock Index Value")
+      lines(x=EuStocksDF$dateTime, y=EuStocksDF$SMI, type="l", col="black")
+      lines(x=EuStocksDF$dateTime, y=EuStocksDF$CAC, type="l", col="blue")
+      lines(x=EuStocksDF$dateTime, y=EuStocksDF$FTSE, type="l", col="green")
+      legend("topleft",legend=colnames(EuStocksDF[2:5]),lty=c(1,2,3,4),col=c("red","black","blue","green"),bg="white",lwd=2)
+```
+
